@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 08:48:14 by hguengo           #+#    #+#             */
-/*   Updated: 2024/09/30 16:42:58 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/05 13:33:29 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     t_arg	arg;
     arg.max_meals = max_meals;
     pthread_mutex_init(&arg.print_mutex, NULL);
+    pthread_mutex_init(&arg.dead_mutex, NULL);
     int i;
     i = 0;
     while ( num_philosophers > i) 
@@ -47,20 +48,21 @@ int main(int argc, char *argv[])
     }
     
     i = 0;
+    arg.is_dead = 0;
+    arg.start_time = get_current_time();
     while (i < num_philosophers)
     {
-        philosophers[i].id = i;
+        philosophers[i].id = i + 1;
         philosophers[i].left_fork = &forks[i];
         philosophers[i].right_fork = &forks[(i + 1) % num_philosophers];
         philosophers[i].time_to_die = time_to_die;
         philosophers[i].time_to_eat = time_to_eat;
         philosophers[i].time_to_sleep = time_to_sleep;
 
-        philosophers[i].last_to_eat = 0;
+        philosophers[i].last_to_eat = get_current_time();
         philosophers[i].meals = 0;
         philosophers[i].arg = &arg;
         philosophers[i].start_time = 0;
-        arg.is_dead = 0;
         pthread_create(&threads[i], NULL, philo_life, &philosophers[i]);
         i++;
     }

@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:35:40 by hguengo           #+#    #+#             */
-/*   Updated: 2024/09/30 16:42:59 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/04 19:29:29 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@ typedef struct s_arg
 {
 	int		max_meals;
 	int		is_dead;
+	long 	start_time;
 	pthread_mutex_t print_mutex;
+	pthread_mutex_t dead_mutex;
 }t_arg;
 
 typedef struct s_philosopher
