@@ -6,16 +6,17 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:51:30 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/09 15:35:26 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/09 16:35:39 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
- int	get_current_last(size_t time)
- {
- 	return(get_current_time() - time);	
- }
+int	get_current_last(size_t time)
+{
+	t_philosopher *philo;
+ 	return(get_current_time() - time - philo->time_to_die);	
+}
 
 int     time_to_die(t_philosopher *philo, t_arg *argay)
 {	
@@ -33,6 +34,13 @@ int     time_to_die(t_philosopher *philo, t_arg *argay)
 		return 1;
 	}
 	return 0;
+}
+
+void	live(t_philosopher *philo, t_arg *argay)
+{
+	pthread_mutex_lock(argay->dead_mutex);
+	argay->is_dead = 1;
+	pthread_mutex_unlock(argay->dead_mutex);
 }
 
 int	time_to_eat(t_philosopher *philo)
@@ -58,7 +66,9 @@ void *philo_life(void *arg) {
     t_philosopher *philo = (t_philosopher *)arg;
     t_arg *arg_dead = philo->arg;
     while (philo->arg->max_meals == -1 || philo->meals < philo->arg->max_meals) {
-        if (time_to_die(philo, arg_dead))
+        if(live(philo, arg))
+		{
+			if (time_to_die(philo, arg_dead))
             break;
       
         print_status(philo, "está pensando");
@@ -73,6 +83,7 @@ void *philo_life(void *arg) {
         if (time_to_die(philo, arg_dead) == 1)
             break;
         usleep(philo->time_to_sleep * 1000);
+		}
     }
     return NULL;
 }
