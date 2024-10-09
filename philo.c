@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 08:48:14 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/05 13:33:29 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/09 12:24:15 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
         pthread_join(threads[i], NULL);
         i++;
     }
-    i = 0;
+
     while (i < num_philosophers) 
     {
         pthread_mutex_destroy(&forks[i]);

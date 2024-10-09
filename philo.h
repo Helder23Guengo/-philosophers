@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:35:40 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/04 19:29:29 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/09 09:24:28 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,9 @@ typedef struct s_philosopher
 }t_philosopher;
 
 
-
-
-
 void *philo_life(void *arg);
 long get_current_time();
 int ft_atoi(const char *str);
 int print_status(t_philosopher *philo, const char *status);
+void monitors(void *arg);
 #endif
