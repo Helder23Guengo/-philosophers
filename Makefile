@@ -14,7 +14,7 @@ all: $(NAME)
 
 $(NAME):
 	$(CC) $(FILE) -c
-	$(CC) $(OBJS) -o $(NAME) $(REF)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(REF)
 
 clean: 
 	$(RM) $(OBJS)

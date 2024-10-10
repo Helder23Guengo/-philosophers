@@ -6,13 +6,13 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:48:03 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/09 13:14:23 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/10 14:10:45 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long get_current_time()
+long    get_current_time()
 {
     struct timeval tv;
     
@@ -20,11 +20,10 @@ long get_current_time()
     return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-int print_status(t_philosopher *philo, const char *status)
+int     print_status(t_philosopher *philo, const char *status)
 {
     t_arg *arg_dead = philo->arg;
 
-    pthread_mutex_init(&arg_dead->print_mutex, NULL);
     pthread_mutex_lock(&arg_dead->dead_mutex);
     while(arg_dead->is_dead == 1)
         break ;
