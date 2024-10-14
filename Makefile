@@ -12,9 +12,8 @@ OBJS = philo.o philo_life.o status.o utils.o
 
 all: $(NAME)
 
-$(NAME):
-	$(CC) $(FILE) -c
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(REF)
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) $(FILE) -o $(NAME) $(REF)
 
 clean: 
 	$(RM) $(OBJS)

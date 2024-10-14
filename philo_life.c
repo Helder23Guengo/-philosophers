@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:51:30 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/14 10:12:47 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/14 18:31:30 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int		get_current_last(size_t time)
  	return(get_current_time() - time);	
 }
 
-int		live(t_philosopher *philo, t_arg *argay)
+int		live(t_arg *argay)
 {
     int     is_dead;
     
@@ -35,21 +35,36 @@ int		live(t_philosopher *philo, t_arg *argay)
     return (1); 
 }
 
+int is_all_full(t_philosopher *philo)
+{
+    int     i;
+    t_arg   *arg;
+
+    i = 0;
+    arg = philo->arg;
+    while (i < arg->num_philosophers)
+    {
+        if (arg->philosophers[i].full == 0)
+			return (0);
+        ++i;
+    }
+    return (1);
+}
+
 int		time_to_die(t_philosopher *philo, t_arg *argay)
 {   
     long ft_hard_time;
 
-    pthread_mutex_lock(&philo->last_to_eat_mutex);  
+    pthread_mutex_lock(&philo->arg->last_to_eat_mutex);  
     ft_hard_time = get_current_time() - philo->last_to_eat;
-    pthread_mutex_unlock(&philo->last_to_eat_mutex);
-    if (ft_hard_time > (philo->time_to_die + 1))
+    pthread_mutex_unlock(&philo->arg->last_to_eat_mutex);
+    if (ft_hard_time > (philo->time_to_die + 1) && !philo->full)
     {
         pthread_mutex_lock(&argay->dead_mutex);
 		argay->is_dead = 1;
         pthread_mutex_unlock(&argay->dead_mutex);
-
         pthread_mutex_lock(&argay->print_mutex);
-        printf("\033[1;31m%ld %d morreu\033[0m\n", get_current_last(philo->arg->start_time) - (get_current_last(philo->arg->start_time) - philo->time_to_die), philo->id);
+        printf("\033[1;31m%ld %d morreu\033[0m\n", ft_hard_time, philo->id);
         pthread_mutex_unlock(&argay->print_mutex);
 
         return (1);
@@ -59,16 +74,12 @@ int		time_to_die(t_philosopher *philo, t_arg *argay)
 
 int		time_to_eat(t_philosopher *philo)
 {
-	// pthread_mutex_lock(philo->left_fork);
-	// print_status(philo, "has taken a fork");
-
-	// pthread_mutex_lock(philo->right_fork);
-	// print_status(philo, "has taken a fork");
-
     if (philo->id % 2 == 0)
     {
         pthread_mutex_lock(philo->left_fork);
         print_status(philo, "has taken a fork");
+		if (philo->num_philosophers == 1)
+			return (pthread_mutex_unlock(philo->left_fork), 0);
         pthread_mutex_lock(philo->right_fork);
         print_status(philo, "has taken a fork");
     }
@@ -76,6 +87,8 @@ int		time_to_eat(t_philosopher *philo)
     {
         pthread_mutex_lock(philo->right_fork);
         print_status(philo, "has taken a fork");
+		if (philo->num_philosophers == 1)
+			return (pthread_mutex_unlock(philo->r_fork), 0);
         pthread_mutex_lock(philo->left_fork);
         print_status(philo, "has taken a fork");
         
@@ -83,11 +96,20 @@ int		time_to_eat(t_philosopher *philo)
     
 	print_status(philo, "is eating");
     
-    pthread_mutex_lock(&philo->last_to_eat_mutex);
+    pthread_mutex_lock(&philo->arg->last_to_eat_mutex);
 	philo->last_to_eat = get_current_time();
-    pthread_mutex_unlock(&philo->last_to_eat_mutex);
+    pthread_mutex_unlock(&philo->arg->last_to_eat_mutex);
     
 	philo->meals++;
+	pthread_mutex_lock(&philo->arg->last_to_eat_mutex);
+	if (philo->meals == philo->arg->max_meals)
+	{
+		philo->full = 1;
+		pthread_mutex_unlock(philo->left_fork);
+		pthread_mutex_unlock(philo->right_fork);
+		return (pthread_mutex_unlock(&philo->arg->last_to_eat_mutex), 0);
+	}
+	pthread_mutex_unlock(&philo->arg->last_to_eat_mutex);
 	usleep(philo->time_to_eat * 1000);
     
 	pthread_mutex_unlock(philo->left_fork);
@@ -104,6 +126,13 @@ void	*philo_monitor(void *args)
     while (1)
     {
         cont = 0;
+		if (is_all_full(arg->philosophers))
+		{
+			pthread_mutex_lock(&arg->dead_mutex);
+			arg->is_dead = 1;
+			pthread_mutex_unlock(&arg->dead_mutex);
+			return (NULL);
+		}
         while (cont < arg->num_philosophers) {
             if (time_to_die(&(arg->philosophers[cont]), arg))
 			{
@@ -115,28 +144,31 @@ void	*philo_monitor(void *args)
 	}
 }
 
+
 void	*philo_life(void *arg)
 {
-    t_philosopher *philo = (t_philosopher *)arg;
-    t_arg *arg_dead = philo->arg;
-    
-    while (live(philo, arg_dead))
+	t_philosopher *philo = (t_philosopher *)arg;
+	t_arg *arg_dead = philo->arg;
+
+	while (live(arg_dead))
 	{
-        if (philo->arg->max_meals == -1 || philo->meals < philo->arg->max_meals)
+		if (philo->arg->max_meals == -1 || philo->meals <= philo->arg->max_meals)
 		{
-            if (time_to_die(philo, arg_dead))
-                	break ;
-            print_status(philo, "está pensando");
-            if (time_to_die(philo, arg_dead))
-                	break ;
-            time_to_eat(philo);
-            print_status(philo, "está dormindo");
-            if (time_to_die(philo, arg_dead))
-                	break ;
-            usleep(philo->time_to_sleep * 1000);
-        }
+			if (time_to_die(philo, arg_dead))
+					break ;
+			print_status(philo, "está pensando");
+			if (time_to_die(philo, arg_dead))
+					break ;
+			time_to_eat(philo);
+			if (is_all_full(arg_dead->philosophers))
+				break ;
+			print_status(philo, "está dormindo");
+			if (time_to_die(philo, arg_dead))
+					break ;
+			usleep(philo->time_to_sleep * 1000);
+		}
 		else
-            break;
-    }
-    return (NULL);
+			break;
+	}
+	return (NULL);
 }

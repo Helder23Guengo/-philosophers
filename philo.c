@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 08:48:14 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/14 09:18:11 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/14 17:48:26 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,18 +43,20 @@ int main(int argc, char *argv[]) {
     arg.philosophers = philosophers; 
     pthread_mutex_init(&arg.print_mutex, NULL);
     pthread_mutex_init(&arg.dead_mutex, NULL);
+    pthread_mutex_init(&arg.last_to_eat_mutex, NULL);
     arg.start_time = get_current_time();
 
     i = 0;
-    while (i < num_philosophers) {
+    while (i < num_philosophers)
+    {
         pthread_mutex_init(&forks[i], NULL);
-        pthread_mutex_init(&philosophers[i].last_to_eat_mutex, NULL);
         i++;
     }
     i = 0;
     while (i < num_philosophers) 
     {
         philosophers[i].id = i + 1;
+        philosophers[i].full = 0;
         philosophers[i].left_fork = &forks[i];
         philosophers[i].right_fork = &forks[(i + 1) % num_philosophers];
         philosophers[i].time_to_die = time_to_die;
@@ -80,7 +82,7 @@ int main(int argc, char *argv[]) {
     while (i < num_philosophers) 
     {
         pthread_mutex_destroy(&forks[i]);
-        pthread_mutex_destroy(&philosophers[i].last_to_eat_mutex);
+        pthread_mutex_destroy(&arg.last_to_eat_mutex);
         i++;
     }
     free(forks);
