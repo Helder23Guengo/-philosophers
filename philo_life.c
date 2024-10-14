@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:51:30 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/11 14:33:42 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/14 10:12:47 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,11 @@ int		live(t_philosopher *philo, t_arg *argay)
 
 int		time_to_die(t_philosopher *philo, t_arg *argay)
 {   
-    long ft_hard_time = get_current_time() - philo->last_to_eat;
+    long ft_hard_time;
+
+    pthread_mutex_lock(&philo->last_to_eat_mutex);  
+    ft_hard_time = get_current_time() - philo->last_to_eat;
+    pthread_mutex_unlock(&philo->last_to_eat_mutex);
     if (ft_hard_time > (philo->time_to_die + 1))
     {
         pthread_mutex_lock(&argay->dead_mutex);
@@ -55,14 +59,34 @@ int		time_to_die(t_philosopher *philo, t_arg *argay)
 
 int		time_to_eat(t_philosopher *philo)
 {
-	pthread_mutex_lock(philo->left_fork);
-	print_status(philo, "has taken a fork");
+	// pthread_mutex_lock(philo->left_fork);
+	// print_status(philo, "has taken a fork");
 
-	pthread_mutex_lock(philo->right_fork);
-	print_status(philo, "has taken a fork");
+	// pthread_mutex_lock(philo->right_fork);
+	// print_status(philo, "has taken a fork");
 
+    if (philo->id % 2 == 0)
+    {
+        pthread_mutex_lock(philo->left_fork);
+        print_status(philo, "has taken a fork");
+        pthread_mutex_lock(philo->right_fork);
+        print_status(philo, "has taken a fork");
+    }
+    else
+    {
+        pthread_mutex_lock(philo->right_fork);
+        print_status(philo, "has taken a fork");
+        pthread_mutex_lock(philo->left_fork);
+        print_status(philo, "has taken a fork");
+        
+    }
+    
 	print_status(philo, "is eating");
+    
+    pthread_mutex_lock(&philo->last_to_eat_mutex);
 	philo->last_to_eat = get_current_time();
+    pthread_mutex_unlock(&philo->last_to_eat_mutex);
+    
 	philo->meals++;
 	usleep(philo->time_to_eat * 1000);
     
@@ -95,7 +119,7 @@ void	*philo_life(void *arg)
 {
     t_philosopher *philo = (t_philosopher *)arg;
     t_arg *arg_dead = philo->arg;
-
+    
     while (live(philo, arg_dead))
 	{
         if (philo->arg->max_meals == -1 || philo->meals < philo->arg->max_meals)

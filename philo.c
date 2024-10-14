@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 08:48:14 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/10 14:11:04 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/14 09:18:11 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ int main(int argc, char *argv[]) {
     i = 0;
     while (i < num_philosophers) {
         pthread_mutex_init(&forks[i], NULL);
+        pthread_mutex_init(&philosophers[i].last_to_eat_mutex, NULL);
         i++;
     }
     i = 0;
@@ -59,11 +60,9 @@ int main(int argc, char *argv[]) {
         philosophers[i].time_to_die = time_to_die;
         philosophers[i].time_to_eat = time_to_eat;
         philosophers[i].time_to_sleep = time_to_sleep;
-
         philosophers[i].last_to_eat = get_current_time();
         philosophers[i].meals = 0;
         philosophers[i].arg = &arg;
-        philosophers[i].start_time = 0;
         pthread_create(&threads[i], NULL, philo_life, &philosophers[i]);
         i++;
     }
@@ -81,6 +80,7 @@ int main(int argc, char *argv[]) {
     while (i < num_philosophers) 
     {
         pthread_mutex_destroy(&forks[i]);
+        pthread_mutex_destroy(&philosophers[i].last_to_eat_mutex);
         i++;
     }
     free(forks);

@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:35:40 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/10 16:31:54 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/14 09:15:36 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,32 +21,33 @@
 
 typedef struct s_philosopher t_philosopher;
 
-typedef struct s_arg
-{
-	 int max_meals;
-    int is_dead;
-    long start_time;
-    pthread_mutex_t print_mutex;
-    pthread_mutex_t dead_mutex;
-    int num_philosophers; 
-    t_philosopher *philosophers; 
-}t_arg;
 
 typedef struct s_philosopher
 {
-	int	id;
-	long 	start_time;
+	int		id;
 	long	last_to_eat;
-	long	time_to_die;
-	long	time_to_eat;
-	long	time_to_sleep;
 	int		meals;
 	pthread_mutex_t *left_fork;
 	pthread_mutex_t *right_fork;
-	t_arg	*arg; 
+	pthread_mutex_t last_to_eat_mutex;
+	struct s_arg	*arg; 
+	long	time_to_die;
+	long	time_to_eat;
+	long	time_to_sleep;
+	//long 	start_time;
 
 }t_philosopher;
 
+typedef struct s_arg
+{
+	int max_meals;
+    int is_dead;
+    long start_time;
+    int num_philosophers; 
+    t_philosopher *philosophers; 
+    pthread_mutex_t print_mutex;
+    pthread_mutex_t dead_mutex;
+}t_arg;
 
 void *philo_life(void *arg);
 long get_current_time();
