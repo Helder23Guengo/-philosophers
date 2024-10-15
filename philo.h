@@ -48,6 +48,7 @@ struct s_arg
     pthread_mutex_t print_mutex;
     pthread_mutex_t dead_mutex;
 	pthread_mutex_t last_to_eat_mutex;
+	pthread_mutex_t *forks;
 };
 
 void *philo_life(void *arg);

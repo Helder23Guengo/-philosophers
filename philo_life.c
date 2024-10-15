@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:51:30 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/14 18:31:30 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/15 05:43:48 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int		time_to_eat(t_philosopher *philo)
     {
         pthread_mutex_lock(philo->left_fork);
         print_status(philo, "has taken a fork");
-		if (philo->num_philosophers == 1)
+		if (philo->arg->num_philosophers == 1)
 			return (pthread_mutex_unlock(philo->left_fork), 0);
         pthread_mutex_lock(philo->right_fork);
         print_status(philo, "has taken a fork");
@@ -87,8 +87,8 @@ int		time_to_eat(t_philosopher *philo)
     {
         pthread_mutex_lock(philo->right_fork);
         print_status(philo, "has taken a fork");
-		if (philo->num_philosophers == 1)
-			return (pthread_mutex_unlock(philo->r_fork), 0);
+		if (philo->arg->num_philosophers == 1)
+			return (pthread_mutex_unlock(philo->right_fork), 0);
         pthread_mutex_lock(philo->left_fork);
         print_status(philo, "has taken a fork");
         
