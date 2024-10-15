@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:35:40 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/15 14:47:56 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:01:25 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct s_philosopher
 	long	time_to_die;
 	long	time_to_eat;
 	long	time_to_sleep;
+	char *argv[];
 	//long 	start_time;
 
 }t_philosopher;
@@ -49,6 +50,7 @@ struct s_arg
     pthread_mutex_t dead_mutex;
 	pthread_mutex_t last_to_eat_mutex;
 	pthread_mutex_t *forks;
+	pthread_t *threads;
 };
 
 void *philo_life(void *arg);
