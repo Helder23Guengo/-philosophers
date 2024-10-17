@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:48:03 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/15 16:24:32 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/17 08:47:39 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ long	get_current_time(void)
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-int	print_status(t_philosopher *philo, const char *status)
+int		print_status(t_philosopher *philo, const char *status)
 {
 	t_arg	*arg_dead;
 
