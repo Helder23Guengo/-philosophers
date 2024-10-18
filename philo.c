@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 08:48:14 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/18 12:23:20 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/18 19:04:44 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,6 @@ void	join_threads(pthread_t *threads, pthread_t monitor_thread, int n_philo)
 		i++;
 	}
 	pthread_join(monitor_thread, NULL);
-}
-
-void	cleanup(t_arg *arg)
-{
-	int	i;
-
-	i = 0;
-	while (i < arg->num_philosophers)
-	{
-		pthread_mutex_destroy(&arg->forks[i]);
-		i++;
-	}
-	pthread_mutex_destroy(&arg->last_to_eat_mutex);
 }
 
 void	create_filosof(int to_die, int to_eat, int to_sleep, t_arg *arg)
@@ -62,89 +49,62 @@ void	create_filosof(int to_die, int to_eat, int to_sleep, t_arg *arg)
 	}
 }
 
-int	is_negative(char *str)
+pthread_mutex_t	*initialize_forks(int num_philosophers)
 {
-	int	i;
-	int	signal;
+	int				i;
+	pthread_mutex_t	*forks;
 
-	signal = 0;
+	forks = malloc(num_philosophers * sizeof(pthread_mutex_t));
 	i = 0;
-	while (str[i] != '\0')
+	while (i < num_philosophers)
 	{
-		if (str[i] == '-')
-		{
-			printf("Error\n");
-			signal = 1;
-			break ;
-		}
+		pthread_mutex_init(&forks[i], NULL);
 		i++;
 	}
-	return (signal);
+	return (forks);
 }
 
-int	validate_args(int argc, char *argv[])
+int	init_main_aux(int argc, char *argv[], t_main_aux *main_aux)
 {
-	int	cont;
+	int	num_philo;
 
-	cont = 0;
-	while (argv[cont])
-	{
-		if (is_negative(argv[cont]) == 1)
-			return (0);
-		cont++;
-	}
-	if (argc < 5 || argc > 6)
-	{
-		printf("Usage: %s <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep> max_meals\n", argv[0]);
+	num_philo = ft_atoi(argv[1]);
+	main_aux->threads = malloc(num_philo * sizeof(pthread_t));
+	main_aux->philosophers = malloc(num_philo * sizeof(t_philosopher));
+	if (argc == 6)
+		main_aux->arg.max_meals = ft_atoi(argv[5]);
+	else
+		main_aux->arg.max_meals = -1;
+	if (ft_atoi(argv[1]) > 200)
+		return (0);
+	main_aux->forks = initialize_forks(ft_atoi(argv[1]));
+	main_aux->arg.forks = main_aux->forks;
+	main_aux->arg.is_dead = 0;
+	main_aux->arg.num_philosophers = ft_atoi(argv[1]);
+	main_aux->arg.philosophers = main_aux->philosophers;
+	main_aux->arg.threads = main_aux->threads;
+	pthread_mutex_init(&main_aux->arg.print_mutex, NULL);
+	pthread_mutex_init(&main_aux->arg.dead_mutex, NULL);
+	pthread_mutex_init(&main_aux->arg.last_to_eat_mutex, NULL);
+	main_aux->arg.start_time = get_current_time();
+	return (0);
+}
+
+int	main(int argc, char *argv[])
+{
+	t_main_aux	aux;
+	pthread_t	monitor_thread;
+
+	if (validate_args(argc, argv) != -1)
 		return (1);
-	}
-	return (-1);
-}
-
-pthread_mutex_t* initialize_forks(int num_philosophers)
-{
-	int		i;
-
-	i = 0;
-    pthread_mutex_t *forks = malloc(num_philosophers * sizeof(pthread_mutex_t));
-    while (i < num_philosophers)
-	{
-        pthread_mutex_init(&forks[i], NULL);
-		i++;
-    }
-    return (forks);
-}
-
-int main(int argc, char *argv[])
-{
-    if (validate_args(argc, argv) != -1) return 1;
-
-    pthread_mutex_t *forks;
-    pthread_t threads[ft_atoi(argv[1])];
-    t_philosopher philosophers[ft_atoi(argv[1])];
-    t_arg arg;
-    pthread_t monitor_thread;
-
-    if (argc == 6)
-		arg.max_meals = ft_atoi(argv[5]);
-    else
-		arg.max_meals = -1;
-    if (ft_atoi(argv[1]) > 200)
-		return 0;
-    forks = initialize_forks(ft_atoi(argv[1]));
-    arg.forks = forks;
-    arg.is_dead = 0;
-    arg.num_philosophers = ft_atoi(argv[1]);
-    arg.philosophers = philosophers;
-    arg.threads = threads;
-    pthread_mutex_init(&arg.print_mutex, NULL);
-    pthread_mutex_init(&arg.dead_mutex, NULL);
-    pthread_mutex_init(&arg.last_to_eat_mutex, NULL);
-    arg.start_time = get_current_time();
-    create_filosof(ft_atoi(argv[2]), ft_atoi(argv[3]), ft_atoi(argv[4]), &arg);
-    pthread_create(&monitor_thread, NULL, philo_monitor, &arg);
-    join_threads(threads, monitor_thread, arg.num_philosophers);
-    cleanup(&arg);
-    free(forks);
-    return 0;
+	init_main_aux(argc, argv, &aux);
+	create_filosof(ft_atoi(argv[2]), ft_atoi(argv[3]),
+		ft_atoi(argv[4]), &aux.arg);
+	pthread_create(&monitor_thread, NULL, philo_monitor, &aux.arg);
+	join_threads(aux.threads, monitor_thread, aux.arg.num_philosophers);
+	cleanup(&aux.arg);
+	free(aux.forks);
+	free(aux.threads);
+	free(aux.philosophers);
+	return (0);
 }

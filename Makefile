@@ -6,9 +6,9 @@ CFLAGS = -g -Wall -Wextra -Werror
 
 RM = rm -f
 
-FILE = philo.c philo_life.c status.c utils.c
+FILE = philo.c philo_life.c status.c utils.c utils2.c
 
-OBJS = philo.o philo_life.o status.o utils.o
+OBJS = philo.o philo_life.o status.o utils.o utils2.o
 
 all: $(NAME)
 

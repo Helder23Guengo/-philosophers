@@ -84,7 +84,10 @@ int	time_to_eat(t_philosopher *philo)
 		pthread_mutex_lock(philo->right_fork);
 		print_status(philo, "has taken a fork");
 		if (philo->arg->num_philosophers == 1)
+		{
+			philo->arg->is_dead = 1;
 			return (pthread_mutex_unlock(philo->right_fork), 0);
+		}
 		pthread_mutex_lock(philo->left_fork);
 		print_status(philo, "has taken a fork");
 	}
@@ -116,8 +119,6 @@ void	*philo_life(void *arg)
 			if (is_all_full(arg_dead->philosophers))
 				break ;
 			print_status(philo, "está dormindo");
-			if (time_to_die(philo, arg_dead))
-				break ;
 			usleep(philo->time_to_sleep * 1000);
 		}
 		else

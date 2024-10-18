@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:35:40 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/18 12:12:16 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/18 19:03:34 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,28 @@ struct s_arg
 	pthread_t		*threads;
 };
 
+typedef struct s_main_aux
+{
+	t_philosopher	*philosophers;
+	pthread_mutex_t	*forks;
+	t_arg			arg;
+	pthread_t		*threads;
+}t_main_aux;
+
 int		get_current_last(size_t time);
 long	get_current_time(void);
 int		ft_atoi(const char *str);
 void	*philo_monitor(void *args);
 int		is_all_full(t_philosopher *philo);
 int		print_status(t_philosopher *philo, const char *status);
-void	monitors(void *arg);
 int		live(t_arg *argay);
 int		time_to_eat_utils(t_philosopher *philo);
 int		time_to_die(t_philosopher *philo, t_arg *argay);
 int		time_to_eat(t_philosopher *philo);
+int		validate_args(int argc, char *argv[]);
+int		is_negative(char *str);
+void	monitors(void *arg);
 void	*philo_life(void *arg);
+void	cleanup(t_arg *arg);
+// void	low_unlock(t_philosopher *philo);
 #endif
