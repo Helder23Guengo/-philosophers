@@ -92,9 +92,7 @@ int	time_to_eat(t_philosopher *philo)
 		print_status(philo, "has taken a fork");
 	}
 	time_to_eat_utils(philo);
-	usleep(philo->time_to_eat * 1000);
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
+	low_unlock(philo);
 	return (0);
 }
 

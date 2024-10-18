@@ -72,5 +72,5 @@ int		is_negative(char *str);
 void	monitors(void *arg);
 void	*philo_life(void *arg);
 void	cleanup(t_arg *arg);
-// void	low_unlock(t_philosopher *philo);
+void	low_unlock(t_philosopher *philo);
 #endif
