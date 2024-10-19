@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 13:13:44 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/18 19:04:34 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/18 22:23:05 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	is_negative(char *str)
 	i = 0;
 	while (str[i] != '\0')
 	{
-		if ((str[i] == '-' || str[i] == '+')
+		if ((str[i] == '-')
 			|| !(str[i] >= '0' && str[i] <= '9'))
 		{
 			printf("Error\n");

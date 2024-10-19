@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:51:30 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/17 15:45:16 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/18 22:23:54 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ int	time_to_eat_utils(t_philosopher *philo)
 
 int	time_to_eat(t_philosopher *philo)
 {
+	pthread_mutex_lock(philo->left_fork);
 	if (philo->id % 2 == 0)
 	{
 		pthread_mutex_lock(philo->left_fork);
