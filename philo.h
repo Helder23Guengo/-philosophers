@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:35:40 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/18 19:03:34 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/21 13:09:55 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ struct s_arg
 	pthread_mutex_t	dead_mutex;
 	pthread_mutex_t	last_to_eat_mutex;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	data_mutex;
 	pthread_t		*threads;
 };
 
@@ -72,5 +73,5 @@ int		is_negative(char *str);
 void	monitors(void *arg);
 void	*philo_life(void *arg);
 void	cleanup(t_arg *arg);
-void	low_unlock(t_philosopher *philo);
+// void	low_unlock(t_philosopher *philo);
 #endif

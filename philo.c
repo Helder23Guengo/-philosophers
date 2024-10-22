@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 08:48:14 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/18 19:04:44 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/21 13:09:28 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ pthread_mutex_t	*initialize_forks(int num_philosophers)
 	int				i;
 	pthread_mutex_t	*forks;
 
-	forks = malloc(num_philosophers * sizeof(pthread_mutex_t));
 	i = 0;
+	forks = malloc(num_philosophers * sizeof(pthread_mutex_t));
 	while (i < num_philosophers)
 	{
 		pthread_mutex_init(&forks[i], NULL);
@@ -85,6 +85,7 @@ int	init_main_aux(int argc, char *argv[], t_main_aux *main_aux)
 	main_aux->arg.threads = main_aux->threads;
 	pthread_mutex_init(&main_aux->arg.print_mutex, NULL);
 	pthread_mutex_init(&main_aux->arg.dead_mutex, NULL);
+	pthread_mutex_init(&main_aux->arg.data_mutex, NULL);
 	pthread_mutex_init(&main_aux->arg.last_to_eat_mutex, NULL);
 	main_aux->arg.start_time = get_current_time();
 	return (0);

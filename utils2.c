@@ -6,18 +6,11 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 13:13:44 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/18 22:23:05 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/21 13:28:51 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	low_unlock(t_philosopher *philo)
-{
-	usleep(philo->time_to_eat * 1000);
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
-}
 
 int	is_negative(char *str)
 {
@@ -28,8 +21,7 @@ int	is_negative(char *str)
 	i = 0;
 	while (str[i] != '\0')
 	{
-		if ((str[i] == '-')
-			|| !(str[i] >= '0' && str[i] <= '9'))
+		if (!(str[i] >= '0' && str[i] <= '9') && str[i] != '+')
 		{
 			printf("Error\n");
 			signal = 1;

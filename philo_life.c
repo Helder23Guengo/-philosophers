@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:51:30 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/18 22:23:54 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/21 15:31:08 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ int	time_to_eat_utils(t_philosopher *philo)
 
 int	time_to_eat(t_philosopher *philo)
 {
-	pthread_mutex_lock(philo->left_fork);
 	if (philo->id % 2 == 0)
 	{
 		pthread_mutex_lock(philo->left_fork);
@@ -93,7 +92,9 @@ int	time_to_eat(t_philosopher *philo)
 		print_status(philo, "has taken a fork");
 	}
 	time_to_eat_utils(philo);
-	low_unlock(philo);
+	usleep(philo->time_to_eat * 1000);
+	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_unlock(philo->right_fork);
 	return (0);
 }
 
