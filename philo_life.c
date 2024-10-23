@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:51:30 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/21 15:31:08 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/23 10:16:35 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,17 @@ int	is_all_full(t_philosopher *philo)
 
 	i = 0;
 	arg = philo->arg;
+	pthread_mutex_lock(&arg->data_mutex);
 	while (i < arg->num_philosophers)
 	{
 		if (arg->philosophers[i].full == 0)
+		{
+			pthread_mutex_unlock(&arg->data_mutex);
 			return (0);
+		}
 		++i;
 	}
+	pthread_mutex_unlock(&arg->data_mutex);
 	return (1);
 }
 
@@ -59,9 +64,9 @@ int	time_to_eat_utils(t_philosopher *philo)
 	pthread_mutex_lock(&philo->arg->last_to_eat_mutex);
 	if (philo->meals == philo->arg->max_meals)
 	{
+		pthread_mutex_lock(&philo->arg->data_mutex);
 		philo->full = 1;
-		pthread_mutex_unlock(philo->left_fork);
-		pthread_mutex_unlock(philo->right_fork);
+		pthread_mutex_unlock(&philo->arg->data_mutex);
 		return (pthread_mutex_unlock(&philo->arg->last_to_eat_mutex), 0);
 	}
 	pthread_mutex_unlock(&philo->arg->last_to_eat_mutex);
@@ -92,9 +97,9 @@ int	time_to_eat(t_philosopher *philo)
 		print_status(philo, "has taken a fork");
 	}
 	time_to_eat_utils(philo);
-	usleep(philo->time_to_eat * 1000);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
+	usleep(philo->time_to_eat * 1000);
 	return (0);
 }
 
