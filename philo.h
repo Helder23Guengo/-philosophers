@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:35:40 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/21 13:09:55 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/23 10:45:16 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,5 +73,5 @@ int		is_negative(char *str);
 void	monitors(void *arg);
 void	*philo_life(void *arg);
 void	cleanup(t_arg *arg);
-// void	low_unlock(t_philosopher *philo);
+void	low_unlock(t_philosopher *philo);
 #endif

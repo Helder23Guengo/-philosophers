@@ -6,7 +6,7 @@
 /*   By: hguengo <hguengo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 09:51:30 by hguengo           #+#    #+#             */
-/*   Updated: 2024/10/23 10:16:35 by hguengo          ###   ########.fr       */
+/*   Updated: 2024/10/23 10:45:25 by hguengo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	time_to_die(t_philosopher *philo, t_arg *argay)
 		argay->is_dead = 1;
 		pthread_mutex_unlock(&argay->dead_mutex);
 		pthread_mutex_lock(&argay->print_mutex);
-		printf("\033[1;31m%ld %d morreu\033[0m\n",
+		printf("\033[1;31m%ld %d died\033[0m\n",
 			get_current_time() - philo->arg->start_time, philo->id);
 		pthread_mutex_unlock(&argay->print_mutex);
 		return (1);
@@ -97,9 +97,7 @@ int	time_to_eat(t_philosopher *philo)
 		print_status(philo, "has taken a fork");
 	}
 	time_to_eat_utils(philo);
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
-	usleep(philo->time_to_eat * 1000);
+	low_unlock(philo);
 	return (0);
 }
 
@@ -112,18 +110,18 @@ void	*philo_life(void *arg)
 	arg_dead = philo->arg;
 	while (live(arg_dead))
 	{
-		if (philo->arg->max_meals == -1
+		if (philo->arg->max_meals >= -1
 			|| philo->meals <= philo->arg->max_meals)
 		{
 			if (time_to_die(philo, arg_dead))
 				break ;
-			print_status(philo, "está pensando");
+			print_status(philo, "is thinking");
 			if (time_to_die(philo, arg_dead))
 				break ;
 			time_to_eat(philo);
 			if (is_all_full(arg_dead->philosophers))
 				break ;
-			print_status(philo, "está dormindo");
+			print_status(philo, " is sleeping");
 			usleep(philo->time_to_sleep * 1000);
 		}
 		else
