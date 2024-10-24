@@ -98,6 +98,8 @@ int	main(int argc, char *argv[])
 
 	if (validate_args(argc, argv) != -1)
 		return (1);
+	if (argc == 6 && ft_atoi(argv[5]) == 0)
+		return (0);
 	init_main_aux(argc, argv, &aux);
 	create_filosof(ft_atoi(argv[2]), ft_atoi(argv[3]),
 		ft_atoi(argv[4]), &aux.arg);

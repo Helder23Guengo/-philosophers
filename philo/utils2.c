@@ -63,7 +63,7 @@ void	cleanup(t_arg *arg)
 
 void	low_unlock(t_philosopher *philo)
 {
+	usleep(philo->time_to_eat * 1000);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
-	usleep(philo->time_to_eat * 1000);
 }
